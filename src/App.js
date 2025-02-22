@@ -89,7 +89,7 @@ function App() {
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [selectedNote, setSelectedNote] = useState(null);
 
-  // 点击便利贴本体 => 打开查看Modal
+  // 点击便利贴本体 => 打开查看 Modal
   function handleNoteClick(note) {
     setSelectedNote(note);
     setIsViewModalOpen(true);
@@ -99,7 +99,7 @@ function App() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editForm] = Form.useForm();
 
-  // 点击“编辑”按钮 => 打开编辑Modal，并预填表单
+  // 点击“编辑”按钮 => 打开编辑 Modal，并预填表单
   function handleEditClick(note) {
     setSelectedNote(note);
     editForm.setFieldsValue({
@@ -128,7 +128,6 @@ function App() {
   return (
     <div className="min-h-screen bg-gray-100">
       <div className="max-w-[1440px] mx-auto px-6 py-8">
-
         {/* 顶部操作栏（含“新建便利贴”功能） */}
         <TopBar
           trackNames={trackNames}
@@ -158,7 +157,10 @@ function App() {
         </div>
       </div>
 
-      {/* ========== 查看便利贴（放大）Modal ========== */}
+      {/* ========== 查看便利贴（放大）Modal ==========
+           方案一：采用 transform scale 放大整体容器，
+           固定容器基础尺寸为 720×720px，经 scale(1.25) 后最终显示为 900×900px，
+           同时添加 overflow-auto 和 break-words 保证长文本自动换行 */}
       <Modal
         title="查看便利贴"
         open={isViewModalOpen}
@@ -169,18 +171,17 @@ function App() {
         bodyStyle={{ height: '90vh', overflowY: 'auto' }}
       >
         {selectedNote && (
-          // Flex居中，使蓝色便利贴整体放大
           <div className="flex items-center justify-center h-full">
             <div
               className={`
                 rounded-lg p-6
                 ${trackColors[selectedNote.track]} bg-opacity-40
-                transform scale-125    /* 整体放大1.25倍 */
                 origin-center
-                min-w-[300px]
+                w-[800px] h-[500px] overflow-auto
               `}
+              style={{ transform: 'scale(1.25)', transition: 'transform 0.3s ease' }}
             >
-              <p className="text-gray-800 mb-4">{selectedNote.content}</p>
+              <p className="text-gray-800 mb-4 break-words">{selectedNote.content}</p>
               <p className="text-base text-gray-600">
                 赛道：{trackNames[selectedNote.track]}
               </p>
@@ -212,7 +213,8 @@ function App() {
         </div>
       </Modal>
 
-      {/* ========== 编辑便利贴 Modal ========== */}
+      {/* ========== 编辑便利贴 Modal ==========
+           与查看 Modal 类似 */}
       <Modal
         title="编辑便利贴"
         open={isEditModalOpen}

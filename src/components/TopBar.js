@@ -19,13 +19,23 @@ function TopBar({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [form] = Form.useForm();
 
+  // 点击“确定”按钮 => 新建便利贴
   function handleCreateNote() {
-    form.validateFields().then(values => {
-      onAddNote(values);
-      message.success('创建成功');
-      setIsModalOpen(false);
-      form.resetFields();
-    });
+    // 先验证表单字段是否符合规则
+    form
+      .validateFields()
+      .then(values => {
+        // 验证通过 => 调用父组件回调创建便利贴
+        onAddNote(values);
+        message.success('创建成功');
+        // 关闭弹窗 & 重置表单
+        setIsModalOpen(false);
+        form.resetFields();
+      })
+      .catch(errorInfo => {
+        // 验证失败 => 在此处可打印错误信息，弹窗保持打开
+        console.log('表单校验失败:', errorInfo);
+      });
   }
 
   return (
